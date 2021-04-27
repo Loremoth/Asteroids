@@ -2,7 +2,12 @@ import random
 
 from pygame.image import load
 from pygame.math import Vector2
+from pygame.mixer import Sound
 
+
+def load_sound(name):
+    path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/{name}.wav"
+    return Sound(path)
 
 def load_sprite(name, with_alpha=True):
     print(name)
