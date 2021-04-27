@@ -11,7 +11,7 @@ def load_sound(name):
 
 def load_sprite(name, with_alpha=True):
     print(name)
-    path = f"C:/Users/ActionICT/PycharmProjects/pythonProject2/awesome_python_project/assets/sprites/{name}.png"
+    path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sprites/{name}.png"
     loaded_sprite = load(path)
 
     if with_alpha:
