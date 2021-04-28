@@ -1,5 +1,6 @@
 import random
 
+from pygame import Color
 from pygame.image import load
 from pygame.math import Vector2
 from pygame.mixer import Sound
@@ -8,6 +9,7 @@ from pygame.mixer import Sound
 def load_sound(name):
     path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/{name}.wav"
     return Sound(path)
+
 
 def load_sprite(name, with_alpha=True):
     print(name)
@@ -37,3 +39,12 @@ def get_random_position(surface):
         random.randrange(surface.get_width()),
         random.randrange(surface.get_height()),
     )
+
+
+def print_text(surface, text, font, color=Color("tomato")):
+    text_surface = font.render(text, True, color)
+
+    rect = text_surface.get_rect()
+    rect.center = Vector2(surface.get_size()) / 2
+
+    surface.blit(text_surface, rect)

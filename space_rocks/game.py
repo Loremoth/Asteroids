@@ -1,7 +1,8 @@
+from time import sleep
+
 import pygame
 
-from models import GameObject
-from utils import load_sprite, get_random_position
+from utils import load_sprite, get_random_position, print_text
 from models import Asteroid, Spaceship
 
 
@@ -13,6 +14,9 @@ class SpaceRocks:
         self.screen = pygame.display.set_mode((800, 600))
         self.background = load_sprite("space", False)
         self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 64)
+        self.message = ""
+
         self.asteroids = []
         self.bullets = []
         self.spaceship = Spaceship((400, 300), self.bullets.append)
@@ -68,7 +72,8 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    quit()
+                    self.message = "You lost!"
+                    break
 
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
@@ -82,6 +87,9 @@ class SpaceRocks:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
+        if not self.asteroids and self.spaceship:
+            self.message = "You won!"
+
     def _draw(self):
         self.screen.fill((0, 0, 255))
         self.screen.blit(self.background, (0, 0))
@@ -90,7 +98,13 @@ class SpaceRocks:
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
 
+        if self.message:
+            print_text(self.screen, self.message, self.font)
+
         pygame.display.flip()
+        if self.message:
+            sleep(5)
+            quit()
         self.clock.tick(60)
 
     def _get_game_objects(self):
@@ -99,6 +113,5 @@ class SpaceRocks:
         if self.spaceship:
             game_objects.append(self.spaceship)
 
+
         return game_objects
-
-
