@@ -68,7 +68,7 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    break
+                    quit()
 
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
