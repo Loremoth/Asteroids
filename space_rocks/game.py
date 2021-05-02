@@ -73,7 +73,7 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    self.message = "You lost!<br>Proviamo l'accapo"
+                    self.message = "       You lost!  <br>Proviamo l'accapo"
                     break
 
         for bullet in self.bullets[:]:
@@ -89,7 +89,7 @@ class SpaceRocks:
                 self.bullets.remove(bullet)
 
         if not self.asteroids and self.spaceship:
-            self.message = "You won!<br> Proviamo l'accapo"
+            self.message = "        You won!  <br> Proviamo l'accapo"
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -98,13 +98,10 @@ class SpaceRocks:
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
 
-        if self.message:
-            pass
-
         pygame.display.flip()
 
         if self.message:
-            print_text(self.screen, self.message, self.font)
+            print_text(self.message)
             sleep(5)
             quit()
 

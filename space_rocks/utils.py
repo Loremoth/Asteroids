@@ -1,10 +1,9 @@
 import random
 
-from pygame import Color
 from pygame.image import load
 from pygame.math import Vector2
 from pygame.mixer import Sound
-from pygame_functions import makeLabel, showLabel
+from pygame_functions import makeLabel, showLabel, moveLabel
 
 
 def load_sound(name):
@@ -42,8 +41,12 @@ def get_random_position(surface):
     )
 
 
-def print_text(surface, text, font, color=Color("tomato")):
+def print_text(text: str):
 
-    test_label = makeLabel(text, 40, 100, 200, fontColour="red", font="Arial")
+    test_label = makeLabel(text, 40, 400, 300, fontColour="red", font="Arial")
+
+    moveLabel(test_label,
+              test_label.rect.topleft[0] - test_label.rect.width/2,
+              test_label.rect.topleft[1] - test_label.rect.height/2)
 
     showLabel(test_label)
