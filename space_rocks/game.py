@@ -1,7 +1,7 @@
 from time import sleep
 
 import pygame
-from pygame_functions import screenSize, setBackgroundColour
+from pygame_functions import screenSize
 
 from utils import load_sprite, get_random_position, print_text
 from models import Asteroid, Spaceship
