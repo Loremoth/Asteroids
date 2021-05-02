@@ -4,6 +4,7 @@ from pygame import Color
 from pygame.image import load
 from pygame.math import Vector2
 from pygame.mixer import Sound
+from pygame_functions import makeLabel, showLabel
 
 
 def load_sound(name):
@@ -42,9 +43,7 @@ def get_random_position(surface):
 
 
 def print_text(surface, text, font, color=Color("tomato")):
-    text_surface = font.render(text, True, color)
 
-    rect = text_surface.get_rect()
-    rect.center = Vector2(surface.get_size()) / 2
+    test_label = makeLabel(text, 40, 100, 200, fontColour="red", font="Arial")
 
-    surface.blit(text_surface, rect)
+    showLabel(test_label)
