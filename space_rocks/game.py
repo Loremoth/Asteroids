@@ -3,6 +3,7 @@ from time import sleep
 import pygame
 from pygame_functions import screenSize
 
+from space_rocks.constants import FinalScreen
 from utils import load_sprite, get_random_position, print_text
 from models import Asteroid, Spaceship
 
@@ -73,7 +74,7 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    self.message = "       You lost!  <br>Proviamo l'accapo"
+                    self.message = FinalScreen.LOST_MESSAGE + '<br>' + FinalScreen.MESSAGE_ESC_OR_CONTINUE
                     break
 
         for bullet in self.bullets[:]:
@@ -89,7 +90,7 @@ class SpaceRocks:
                 self.bullets.remove(bullet)
 
         if not self.asteroids and self.spaceship:
-            self.message = "        You won!  <br> Proviamo l'accapo"
+            self.message = FinalScreen.WON_MESSAGE + '<br>' + FinalScreen.MESSAGE_ESC_OR_CONTINUE
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
