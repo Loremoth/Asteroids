@@ -40,13 +40,15 @@ def get_random_position(surface):
     )
 
 
-def print_text(text: str):
+def print_text(text: str, screen):
     test_label = makeLabel(text, 60, 400, 300, fontColour="red",
                            font='juiceitc', background='clear')
 
     moveLabel(test_label,
               test_label.rect.topleft[0] - test_label.rect.width/2,
               test_label.rect.topleft[1] - test_label.rect.height/2)
+
+    screen.fill("black")
 
     showLabel(test_label)
 

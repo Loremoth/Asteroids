@@ -102,7 +102,8 @@ class SpaceRocks:
         pygame.display.flip()
 
         if self.message:
-            print_text(self.message)
+            print_text(self.message, self.screen)
+
             sleep(5)
             quit()
 
