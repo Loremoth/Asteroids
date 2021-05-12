@@ -1,7 +1,7 @@
 from time import sleep
 
 import pygame
-from pygame_functions import screenSize
+from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLabel
 
 from space_rocks.constants import FinalScreen
 from utils import load_sprite, get_random_position, print_text
@@ -102,10 +102,31 @@ class SpaceRocks:
         pygame.display.flip()
 
         if self.message:
-            print_text(self.message, self.screen)
+            test_label = makeLabel(self.message, 60, 400, 300, fontColour="red",
+                                   font='juiceitc', background='clear')
 
-            sleep(5)
-            quit()
+            moveLabel(test_label,
+                      test_label.rect.topleft[0] - test_label.rect.width / 2,
+                      test_label.rect.topleft[1] - test_label.rect.height / 2)
+
+            self.screen.fill("black")
+
+            showLabel(test_label)
+
+            while True:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT or (
+                                event.type == pygame.KEYDOWN and
+                                (event.key == pygame.K_ESCAPE)
+                        ):
+                            quit()
+                        elif (
+                                event.type == pygame.KEYDOWN
+                                and event.key == pygame.K_RETURN
+                        ):
+                            hideLabel(test_label)
+                            self.__init__()
+                            self.main_loop()
 
         self.clock.tick(60)
 
