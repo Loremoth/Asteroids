@@ -74,7 +74,7 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
-                    self.message = FinalScreen.LOST_MESSAGE + '<br>' + FinalScreen.MESSAGE_ESC_OR_CONTINUE
+                    self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE)
                     break
 
         for bullet in self.bullets[:]:
@@ -90,7 +90,7 @@ class SpaceRocks:
                 self.bullets.remove(bullet)
 
         if not self.asteroids and self.spaceship:
-            self.message = FinalScreen.WON_MESSAGE + '<br>' + FinalScreen.MESSAGE_ESC_OR_CONTINUE
+            self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.WON_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE)
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
