@@ -19,6 +19,12 @@ class SpaceRocks:
         self.font = pygame.font.Font(None, 64)
         self.message = ""
 
+        file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
+
         self.asteroids = []
         self.bullets = []
         self.spaceship = Spaceship((400, 300), self.bullets.append)
