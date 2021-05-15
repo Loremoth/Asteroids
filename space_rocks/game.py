@@ -30,7 +30,7 @@ class SpaceRocks:
         self.bullets = []
         self.spaceship = Spaceship((400, 300), self.bullets.append)
 
-        for _ in range(6):
+        for _ in range(8):
             while True:
                 position = get_random_position(self.screen)
                 if (
