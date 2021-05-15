@@ -119,6 +119,8 @@ class SpaceRocks:
 
             showLabel(test_label)
 
+            pygame.mixer.music.stop()
+
             while True:
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT or (
