@@ -1,6 +1,7 @@
 from time import sleep
 
 import pygame
+from pygame.mixer import Sound
 from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLabel
 
 from space_rocks.constants import FinalScreen
@@ -80,12 +81,19 @@ class SpaceRocks:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
+                    #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
                     self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE)
                     break
 
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
+                    if asteroid.size == 1:
+                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/firework_explosion_001.mp3').play()
+                    elif asteroid.size == 3:
+                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_explosion_large.mp3').play()
+                    else:
+                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/boom.mp3').play()
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
