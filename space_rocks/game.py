@@ -13,7 +13,7 @@ class SpaceRocks:
 
     def __init__(self):
         self._init_pygame()
-        self.screen = screenSize(800, 600)
+        self.screen = screenSize(1000, 700)
         self.background = load_sprite("space", False)
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 64)
