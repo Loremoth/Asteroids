@@ -7,7 +7,7 @@ from pygame_functions import makeLabel, showLabel, moveLabel
 
 
 def load_sound(name):
-    path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/{name}.wav"
+    path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_laser.mp3 "
     return Sound(path)
 
 
