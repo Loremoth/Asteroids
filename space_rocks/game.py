@@ -20,6 +20,9 @@ class SpaceRocks:
         self.font = pygame.font.Font(None, 64)
         self.message = ""
         self.destroyed_small = 0
+        self.score = 0
+        self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
+
 
         file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
         pygame.init()
@@ -83,7 +86,7 @@ class SpaceRocks:
                 if asteroid.collides_with(self.spaceship):
                     self.spaceship = None
                     #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
-                    self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE)
+                    self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE) +' '+ str(self.score)
                     break
 
         for bullet in self.bullets[:]:
@@ -109,6 +112,7 @@ class SpaceRocks:
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
+                    self.score +=10
                     break
 
         for bullet in self.bullets[:]:
@@ -124,6 +128,9 @@ class SpaceRocks:
         # self.asteroid.draw(self.screen)
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
+
+        self.screen.blit(self.scoretext, (500, 10))
+        self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
 
         pygame.display.flip()
 
