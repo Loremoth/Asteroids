@@ -10,9 +10,9 @@ from models import Asteroid, Spaceship
 
 
 class SpaceRocks:
-    MIN_ASTEROID_DISTANCE = 250
+    MIN_ASTEROID_DISTANCE = 500
 
-    def __init__(self):
+    def __init__(self, mute=False):
         self._init_pygame()
         self.screen = screenSize(1000, 700)
         self.background = load_sprite("space", False)
@@ -22,17 +22,18 @@ class SpaceRocks:
         self.destroyed_small = 0
         self.score = 0
         self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
-
+        self.mute = mute
 
         file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
-        pygame.init()
-        pygame.mixer.init()
-        pygame.mixer.music.load(file)
-        pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
+        if not mute:
+            pygame.init()
+            pygame.mixer.init()
+            pygame.mixer.music.load(file)
+            pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
 
         self.asteroids = []
         self.bullets = []
-        self.spaceship = Spaceship((400, 300), self.bullets.append)
+        self.spaceship = Spaceship((400, 300), self.bullets.append, mute = self.mute)
 
         for _ in range(5):
             while True:
@@ -93,7 +94,8 @@ class SpaceRocks:
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
                     if asteroid.size == 1:
-                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/firework_explosion_001.mp3').play()
+                        if not self.mute:
+                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/firework_explosion_001.mp3').play()
                         self.destroyed_small += 1
                         if self.destroyed_small == 4:
                             while True:
@@ -106,9 +108,11 @@ class SpaceRocks:
                             self.destroyed_small = 0
                             self.asteroids.append(Asteroid(position, self.asteroids.append))
                     elif asteroid.size == 3:
-                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_explosion_large.mp3').play()
+                        if not self.mute:
+                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_explosion_large.mp3').play()
                     else:
-                        Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/boom.mp3').play()
+                        if not self.mute:
+                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/boom.mp3').play()
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
@@ -160,7 +164,7 @@ class SpaceRocks:
                                 and event.key == pygame.K_RETURN
                         ):
                             hideLabel(test_label)
-                            self.__init__()
+                            self.__init__(mute=True)
                             self.main_loop()
 
         self.clock.tick(60)

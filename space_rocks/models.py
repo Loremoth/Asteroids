@@ -57,11 +57,13 @@ class Spaceship(GameObject):
     ACCELERATION = 0.25
     BULLET_SPEED = 3
 
-    def __init__(self, position, create_bullet_callback):
+    def __init__(self, position, create_bullet_callback, mute):
         self.create_bullet_callback = create_bullet_callback
         # Make a copy of the original UP vector
-        self.laser_sound = load_sound("laser")
+        if not mute:
+            self.laser_sound = load_sound("laser")
         self.direction = Vector2(UP)
+        self.mute = mute
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
@@ -83,7 +85,8 @@ class Spaceship(GameObject):
         bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
         bullet = Bullet(self.position, bullet_velocity)
         self.create_bullet_callback(bullet)
-        self.laser_sound.play()
+        if not self.mute:
+            self.laser_sound.play()
 
 
 class Bullet(GameObject):
