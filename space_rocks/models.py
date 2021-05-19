@@ -1,3 +1,6 @@
+import logging
+
+import pygame.time
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 from utils import load_sprite, wrap_position, get_random_velocity, load_sound
@@ -82,6 +85,7 @@ class Spaceship(GameObject):
         self.velocity += self.direction * self.ACCELERATION
 
     def shoot(self):
+        logging.debug("Shooting at time " + str(pygame.time.get_ticks()))
         bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
         bullet = Bullet(self.position, bullet_velocity)
         self.create_bullet_callback(bullet)

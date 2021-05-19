@@ -24,6 +24,7 @@ class SpaceRocks:
         self.score = 0
         self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
         self.mute = mute
+        self.previous_time = 0
 
         logging.debug("mute: " + str(mute))
 
@@ -68,11 +69,16 @@ class SpaceRocks:
                     event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
             ):
                 quit()
-            elif (
-                    self.spaceship
-                    and event.type == pygame.KEYDOWN
-                    and event.key == pygame.K_SPACE
-            ):
+            elif self.spaceship and ((event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE)):
+                self.spaceship.shoot()
+
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.previous_time > 200:
+            logging.debug("Previous time " + str(self.previous_time))
+            logging.debug("Current time " + str(current_time))
+            self.previous_time = current_time
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
                 self.spaceship.shoot()
 
         is_key_pressed = pygame.key.get_pressed()
@@ -123,7 +129,7 @@ class SpaceRocks:
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
-                    self.score +=10
+                    self.score += 10
                     break
 
         for bullet in self.bullets[:]:
