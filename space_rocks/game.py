@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 
 import pygame
@@ -24,8 +25,11 @@ class SpaceRocks:
         self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
         self.mute = mute
 
-        file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
+        logging.debug("mute: " + str(mute))
+
         if not mute:
+            file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
+            logging.info("starting mixer")
             pygame.init()
             pygame.mixer.init()
             pygame.mixer.music.load(file)
@@ -34,6 +38,7 @@ class SpaceRocks:
         self.asteroids = []
         self.bullets = []
         self.spaceship = Spaceship((400, 300), self.bullets.append, mute = self.mute)
+        logging.info("Creating initial asteroids")
 
         for _ in range(5):
             while True:
@@ -47,6 +52,7 @@ class SpaceRocks:
             self.asteroids.append(Asteroid(position, self.asteroids.append))
 
     def main_loop(self):
+        logging.info("Starting main loop")
         while True:
             self._handle_input()
             self._process_game_logic()
@@ -85,6 +91,7 @@ class SpaceRocks:
         if self.spaceship:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
+                    logging.info("game over!!")
                     self.spaceship = None
                     #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
                     self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE) +' '+ str(self.score)
@@ -158,12 +165,15 @@ class SpaceRocks:
                                 event.type == pygame.KEYDOWN and
                                 (event.key == pygame.K_ESCAPE)
                         ):
+                            logging.info("Quitting game")
                             quit()
                         elif (
                                 event.type == pygame.KEYDOWN
                                 and event.key == pygame.K_RETURN
                         ):
                             hideLabel(test_label)
+                            logging.info("Restarting...")
+                            logging.info("\n\n----------------------------------------------------------\n\n")
                             self.__init__(mute=True)
                             self.main_loop()
 
