@@ -1,6 +1,7 @@
 import logging
 
 import pygame.time
+import pygame_assets.loaders
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 from utils import load_sprite, wrap_position, get_random_velocity, load_sound
@@ -64,7 +65,8 @@ class Spaceship(GameObject):
         self.create_bullet_callback = create_bullet_callback
         # Make a copy of the original UP vector
         if not mute:
-            self.laser_sound = load_sound("laser")
+            self.laser_sound = pygame_assets.loaders.sound("laser.wav")
+            self.laser_sound.set_volume(0.1)
         self.direction = Vector2(UP)
         self.mute = mute
         super().__init__(position, load_sprite("spaceship"), Vector2(0))

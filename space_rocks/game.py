@@ -2,6 +2,7 @@ import logging
 from time import sleep
 
 import pygame
+import pygame_assets
 from pygame.mixer import Sound
 from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLabel
 
@@ -99,7 +100,7 @@ class SpaceRocks:
                 if asteroid.collides_with(self.spaceship):
                     logging.info("game over!!")
                     self.spaceship = None
-                    #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
+                    #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sound/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
                     self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE) +' '+ str(self.score)
                     break
 
@@ -108,7 +109,7 @@ class SpaceRocks:
                 if asteroid.collides_with(bullet):
                     if asteroid.size == 1:
                         if not self.mute:
-                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/firework_explosion_001.mp3').play()
+                            pygame_assets.loaders.sound('firework_explosion_001.mp3').play()
                         self.destroyed_small += 1
                         if self.destroyed_small == 4:
                             while True:
@@ -122,10 +123,10 @@ class SpaceRocks:
                             self.asteroids.append(Asteroid(position, self.asteroids.append))
                     elif asteroid.size == 3:
                         if not self.mute:
-                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_explosion_large.mp3').play()
+                            pygame_assets.loaders.sound('zapsplat_explosion_large.mp3').play()
                     else:
                         if not self.mute:
-                            Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/boom.mp3').play()
+                            pygame_assets.loaders.sound("boom.mp3").play()
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
