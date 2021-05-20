@@ -4,7 +4,7 @@ import pygame.time
 import pygame_assets.loaders
 from pygame.math import Vector2
 from pygame.transform import rotozoom
-from utils import load_sprite, wrap_position, get_random_velocity, load_sound
+from utils import load_sprite, wrap_position, get_random_velocity
 
 UP = Vector2(0, -1)
 

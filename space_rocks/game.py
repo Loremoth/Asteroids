@@ -198,7 +198,7 @@ class SpaceRocks:
                     hideLabel(test_label)
                     logging.info("Restarting...")
                     logging.info("\n\n----------------------------------------------------------\n\n")
-                    self.__init__(mute=True)
+                    self.__init__(mute=self.mute)
                     self.main_loop()
 
     def _get_game_objects(self):

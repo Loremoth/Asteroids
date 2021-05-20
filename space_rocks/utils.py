@@ -2,13 +2,7 @@ import random
 
 from pygame.image import load
 from pygame.math import Vector2
-from pygame.mixer import Sound
 from pygame_functions import makeLabel, showLabel, moveLabel
-
-
-def load_sound(name):
-    path = f"C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sounds/zapsplat_laser.mp3 "
-    return Sound(path)
 
 
 def load_sprite(name, with_alpha=True):
