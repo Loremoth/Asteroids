@@ -29,19 +29,24 @@ class SpaceRocks:
 
         logging.debug("mute: " + str(mute))
 
-        if not mute:
-            file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
-            logging.info("starting mixer")
-            pygame.init()
-            pygame.mixer.init()
-            pygame.mixer.music.load(file)
-            pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
+        if not self.mute:
+            self._init_mixer()
 
         self.asteroids = []
         self.bullets = []
-        self.spaceship = Spaceship((400, 300), self.bullets.append, mute = self.mute)
+        self.spaceship = Spaceship((400, 300), self.bullets.append, mute=self.mute)
         logging.info("Creating initial asteroids")
+        self._create_asteroids()
 
+    def _init_mixer(self):
+        file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
+        logging.info("starting mixer")
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
+
+    def _create_asteroids(self):
         for _ in range(5):
             while True:
                 position = get_random_position(self.screen)
@@ -95,15 +100,26 @@ class SpaceRocks:
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
+
+        self._process_asteroid_creation()
+        self._process_fired_bullets()
+
+        if not self.asteroids and self.spaceship:
+            self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.WON_MESSAGE,
+                                                                      FinalScreen.MESSAGE_ESC_OR_CONTINUE)
+
+    def _process_asteroid_creation(self):
         if self.spaceship:
             for asteroid in self.asteroids:
                 if asteroid.collides_with(self.spaceship):
                     logging.info("game over!!")
                     self.spaceship = None
-                    #Sound('C:/Users/ActionICT/PycharmProjects/Asteroids/assets/sound/Blastwave_FX_BankSafeExplosion_HV.37.mp3').play()
-                    self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE) +' '+ str(self.score)
+                    self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.LOST_MESSAGE,
+                                                                              FinalScreen.MESSAGE_ESC_OR_CONTINUE) \
+                                   + ' ' + str(self.score)
                     break
 
+    def _process_fired_bullets(self):
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
@@ -137,13 +153,9 @@ class SpaceRocks:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
-        if not self.asteroids and self.spaceship:
-            self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.WON_MESSAGE, FinalScreen.MESSAGE_ESC_OR_CONTINUE)
-
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
-        # self.spaceship.draw(self.screen)
-        # self.asteroid.draw(self.screen)
+
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
 
@@ -153,38 +165,41 @@ class SpaceRocks:
         pygame.display.flip()
 
         if self.message:
-            test_label = makeLabel(self.message, 60, 400, 300, fontColour="red",
-                                   font='juiceitc', background='clear')
-
-            moveLabel(test_label,
-                      test_label.rect.topleft[0] - test_label.rect.width / 2,
-                      test_label.rect.topleft[1] - test_label.rect.height / 2)
-
-            self.screen.fill("black")
-
-            showLabel(test_label)
-
-            pygame.mixer.music.stop()
-
-            while True:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT or (
-                                event.type == pygame.KEYDOWN and
-                                (event.key == pygame.K_ESCAPE)
-                        ):
-                            logging.info("Quitting game")
-                            quit()
-                        elif (
-                                event.type == pygame.KEYDOWN
-                                and event.key == pygame.K_RETURN
-                        ):
-                            hideLabel(test_label)
-                            logging.info("Restarting...")
-                            logging.info("\n\n----------------------------------------------------------\n\n")
-                            self.__init__(mute=True)
-                            self.main_loop()
+            self._handle_quitting()
 
         self.clock.tick(60)
+
+    def _handle_quitting(self):
+        test_label = makeLabel(self.message, 60, 400, 300, fontColour="red",
+                               font='juiceitc', background='clear')
+
+        moveLabel(test_label,
+                  test_label.rect.topleft[0] - test_label.rect.width / 2,
+                  test_label.rect.topleft[1] - test_label.rect.height / 2)
+
+        self.screen.fill("black")
+
+        showLabel(test_label)
+
+        pygame.mixer.music.stop()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (
+                        event.type == pygame.KEYDOWN and
+                        (event.key == pygame.K_ESCAPE)
+                ):
+                    logging.info("Quitting game")
+                    quit()
+                elif (
+                        event.type == pygame.KEYDOWN
+                        and event.key == pygame.K_RETURN
+                ):
+                    hideLabel(test_label)
+                    logging.info("Restarting...")
+                    logging.info("\n\n----------------------------------------------------------\n\n")
+                    self.__init__(mute=True)
+                    self.main_loop()
 
     def _get_game_objects(self):
         game_objects = [*self.asteroids, *self.bullets]
@@ -193,6 +208,3 @@ class SpaceRocks:
             game_objects.append(self.spaceship)
 
         return game_objects
-
-    # def _final_screen_handling(self):
-
