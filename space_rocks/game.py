@@ -3,7 +3,6 @@ from time import sleep
 
 import pygame
 import pygame_assets
-from pygame.mixer import Sound
 from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLabel
 
 from space_rocks.constants import FinalScreen
@@ -19,13 +18,17 @@ class SpaceRocks:
         self.screen = screenSize(1000, 700)
         self.background = load_sprite("space", False)
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font(None, 64)
+        self.font = pygame.font.SysFont('juiceitc', 64)
         self.message = ""
         self.destroyed_small = 0
         self.score = 0
         self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
         self.mute = mute
         self.previous_time = 0
+        self.score_column = pygame.rect.Rect((800, 0, 200, 700))
+        self.game_column = pygame.rect.Rect((0, 0, 800, 700))
+        self.game_surface = pygame.surface.Surface.subsurface(self.screen, self.game_column)
+        self.score_surface = pygame.Surface.subsurface(self.screen, self.score_column)
 
         logging.debug("mute: " + str(mute))
 
@@ -65,11 +68,9 @@ class SpaceRocks:
             self._process_game_logic()
             self._draw()
 
-
     def _init_pygame(self):
         pygame.init()
         pygame.display.set_caption("Space Rocks")
-
 
     def _handle_input(self):
         for event in pygame.event.get():
@@ -95,7 +96,7 @@ class SpaceRocks:
 
     def _process_game_logic(self):
         for game_object in self._get_game_objects():
-            game_object.move(self.screen)
+            game_object.move(self.game_surface)
 
         self._process_asteroid_creation()
         self._process_fired_bullets()
@@ -125,7 +126,7 @@ class SpaceRocks:
                         self.destroyed_small += 1
                         if self.destroyed_small == 4:
                             while True:
-                                position = get_random_position(self.screen)
+                                position = get_random_position(self.game_surface)
                                 if (
                                         position.distance_to(self.spaceship.position)
                                         > self.MIN_ASTEROID_DISTANCE
@@ -146,17 +147,26 @@ class SpaceRocks:
                     break
 
         for bullet in self.bullets[:]:
-            if not self.screen.get_rect().collidepoint(bullet.position):
+            if not self.game_surface.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
     def _draw(self):
-        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.background, self.game_column)
+        self.screen.blit(pygame.surface.Surface((300, 700)), self.score_column)
 
         for game_object in self._get_game_objects():
-            game_object.draw(self.screen)
+            game_object.draw(self.game_surface)
 
-        self.screen.blit(self.scoretext, (500, 10))
-        self.scoretext = self.font.render("Score = " + str(self.score), 1, (255, 0, 0))
+        self.scoretext = self.font.render("Score" , 1, (255, 0, 0))
+        self.scorevalue = self.font.render(str(self.score), 1, (255, 0, 0))
+
+        self.score_surface.blit(self.scoretext, (30, 0))
+        self.score_surface.blit(self.scorevalue, (30, 50))
+
+        # test_label = makeLabel("Score = " + str(self.score), 60, 400, 300, fontColour="red",
+        #                        font='juiceitc', background='clear')
+        #
+        # showLabel(test_label)
 
         pygame.display.flip()
 
