@@ -39,7 +39,7 @@ class SpaceRocks:
         self._create_asteroids()
 
     def _init_mixer(self):
-        file = 'C://Users//ActionICT//PycharmProjects//Asteroids//assets//music//jlbrock44_-_Stars_Below_Us.mp3'
+        file = './/assets//music//jlbrock44_-_Stars_Below_Us.mp3'
         logging.info("starting mixer")
         pygame.init()
         pygame.mixer.init()
@@ -78,14 +78,8 @@ class SpaceRocks:
             elif self.spaceship and ((event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE)):
                 self.spaceship.shoot()
 
-        current_time = pygame.time.get_ticks()
-
-        if current_time - self.previous_time > 200:
-            logging.debug("Previous time " + str(self.previous_time))
-            logging.debug("Current time " + str(current_time))
-            self.previous_time = current_time
-            if pygame.key.get_pressed()[pygame.K_SPACE]:
-                self.spaceship.shoot()
+        if pygame.key.get_pressed()[pygame.K_SPACE]:
+            self.spaceship.shoot()
 
         is_key_pressed = pygame.key.get_pressed()
 

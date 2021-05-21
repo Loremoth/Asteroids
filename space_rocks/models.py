@@ -60,6 +60,7 @@ class Spaceship(GameObject):
     MANEUVERABILITY = 3
     ACCELERATION = 0.25
     BULLET_SPEED = 3
+    MAX_SPEED = 5
 
     def __init__(self, position, create_bullet_callback, mute):
         self.create_bullet_callback = create_bullet_callback
@@ -70,6 +71,7 @@ class Spaceship(GameObject):
         self.direction = Vector2(UP)
         self.mute = mute
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
+        self.last_shoot_time = 0
 
     def rotate(self, clockwise=True):
         sign = 1 if clockwise else -1
@@ -86,13 +88,26 @@ class Spaceship(GameObject):
     def accelerate(self):
         self.velocity += self.direction * self.ACCELERATION
 
+        if self.velocity[0] > self.MAX_SPEED:
+            self.velocity[0] = self.MAX_SPEED
+        if self.velocity[1] > self.MAX_SPEED:
+            self.velocity[1] = self.MAX_SPEED
+
+        if self.velocity[0] < -self.MAX_SPEED:
+            self.velocity[0] = -self.MAX_SPEED
+        if self.velocity[1] < -self.MAX_SPEED:
+            self.velocity[1] = -self.MAX_SPEED
+
     def shoot(self):
-        logging.debug("Shooting at time " + str(pygame.time.get_ticks()))
-        bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
-        bullet = Bullet(self.position, bullet_velocity)
-        self.create_bullet_callback(bullet)
-        if not self.mute:
-            self.laser_sound.play()
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_shoot_time > 100:
+            self.last_shoot_time = current_time
+            logging.debug("Shooting at time " + str(pygame.time.get_ticks()))
+            bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
+            bullet = Bullet(self.position, bullet_velocity)
+            self.create_bullet_callback(bullet)
+            if not self.mute:
+                self.laser_sound.play()
 
 
 class Bullet(GameObject):
