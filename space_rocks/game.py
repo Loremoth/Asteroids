@@ -65,9 +65,11 @@ class SpaceRocks:
             self._process_game_logic()
             self._draw()
 
+
     def _init_pygame(self):
         pygame.init()
         pygame.display.set_caption("Space Rocks")
+
 
     def _handle_input(self):
         for event in pygame.event.get():
