@@ -59,7 +59,7 @@ class Asteroid(GameObject):
 class Spaceship(GameObject):
     MANEUVERABILITY = 5
     ACCELERATION = 0.25
-    BULLET_SPEED = 3
+    BULLET_SPEED = 10
     MAX_SPEED = 5
 
     def __init__(self, position, create_bullet_callback, mute):
@@ -103,7 +103,7 @@ class Spaceship(GameObject):
         if current_time - self.last_shoot_time > 100:
             self.last_shoot_time = current_time
             logging.debug("Shooting at time " + str(pygame.time.get_ticks()))
-            bullet_velocity = self.direction * self.BULLET_SPEED + self.velocity
+            bullet_velocity = self.direction * self.BULLET_SPEED #+ self.velocity
             bullet = Bullet(self.position, bullet_velocity)
             self.create_bullet_callback(bullet)
             if not self.mute:
