@@ -73,19 +73,23 @@ class SpaceRocks:
         pygame.display.set_caption("Space Rocks")
 
     def _handle_input(self):
+        self._handling_quit()
+        self._handling_fire()
+        self._handling_movement()
+
+    def _handling_quit(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (
                     event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
             ):
                 quit()
-            elif self.spaceship and ((event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE)):
-                self.spaceship.shoot()
 
+    def _handling_fire(self):
         if pygame.key.get_pressed()[pygame.K_SPACE]:
             self.spaceship.shoot()
 
+    def _handling_movement(self):
         is_key_pressed = pygame.key.get_pressed()
-
         if self.spaceship:
             if is_key_pressed[pygame.K_RIGHT]:
                 self.spaceship.rotate(clockwise=True)
@@ -100,10 +104,6 @@ class SpaceRocks:
 
         self._process_asteroid_creation()
         self._process_fired_bullets()
-
-        if not self.asteroids and self.spaceship:
-            self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.WON_MESSAGE,
-                                                                      FinalScreen.MESSAGE_ESC_OR_CONTINUE)
 
     def _process_asteroid_creation(self):
         if self.spaceship:
@@ -151,22 +151,11 @@ class SpaceRocks:
                 self.bullets.remove(bullet)
 
     def _draw(self):
-        self.screen.blit(self.background, self.game_column)
-        self.screen.blit(pygame.surface.Surface((300, 700)), self.score_column)
+        self._draw_game_surface()
+        self._draw_score_surface()
 
         for game_object in self._get_game_objects():
             game_object.draw(self.game_surface)
-
-        self.scoretext = self.font.render("Score" , 1, (255, 0, 0))
-        self.scorevalue = self.font.render(str(self.score), 1, (255, 0, 0))
-
-        self.score_surface.blit(self.scoretext, (30, 0))
-        self.score_surface.blit(self.scorevalue, (30, 50))
-
-        # test_label = makeLabel("Score = " + str(self.score), 60, 400, 300, fontColour="red",
-        #                        font='juiceitc', background='clear')
-        #
-        # showLabel(test_label)
 
         pygame.display.flip()
 
@@ -174,6 +163,17 @@ class SpaceRocks:
             self._handle_quitting()
 
         self.clock.tick(60)
+
+    def _draw_game_surface(self):
+        self.game_surface.blit(self.background, self.game_column)
+
+    def _draw_score_surface(self):
+        self.screen.blit(pygame.surface.Surface((300, 700)), self.score_column)
+        self.scoretext = self.font.render("Score", 1, (255, 0, 0))
+        self.scorevalue = self.font.render(str(self.score), 1, (255, 0, 0))
+
+        self.score_surface.blit(self.scoretext, (30, 0))
+        self.score_surface.blit(self.scorevalue, (30, 50))
 
     def _handle_quitting(self):
         test_label = makeLabel(self.message, 60, 400, 300, fontColour="red",

@@ -87,7 +87,10 @@ class Spaceship(GameObject):
 
     def accelerate(self):
         self.velocity += self.direction * self.ACCELERATION
+        self._limit_velocity()
 
+
+    def _limit_velocity(self):
         if self.velocity[0] > self.MAX_SPEED:
             self.velocity[0] = self.MAX_SPEED
         if self.velocity[1] > self.MAX_SPEED:
