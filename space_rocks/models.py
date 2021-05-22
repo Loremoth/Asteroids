@@ -57,7 +57,7 @@ class Asteroid(GameObject):
 
 
 class Spaceship(GameObject):
-    MANEUVERABILITY = 3
+    MANEUVERABILITY = 5
     ACCELERATION = 0.25
     BULLET_SPEED = 3
     MAX_SPEED = 5
