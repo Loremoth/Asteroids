@@ -7,7 +7,7 @@ from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLa
 
 from space_rocks.constants import FinalScreen
 from utils import load_sprite, get_random_position, print_text
-from models import Asteroid, Spaceship
+from models import Asteroid, Spaceship, Bonus
 
 
 class SpaceRocks:
@@ -38,6 +38,7 @@ class SpaceRocks:
         self.asteroids = []
         self.bullets = []
         self.spaceship = Spaceship((400, 300), self.bullets.append, mute=self.mute)
+        self.bonus = Bonus((500, 600), None, None)
         logging.info("Creating initial asteroids")
         self._create_asteroids()
 
@@ -100,6 +101,7 @@ class SpaceRocks:
 
         self._process_asteroid_creation()
         self._process_fired_bullets()
+        self._process_bonus()
 
         if not self.asteroids and self.spaceship:
             self.message = FinalScreen.PROTOTYPE_FINAL_DISPLAY.format(FinalScreen.WON_MESSAGE,
@@ -125,21 +127,23 @@ class SpaceRocks:
                             pygame_assets.loaders.sound('firework_explosion_001.mp3').play()
                         self.destroyed_small += 1
                         if self.destroyed_small == 4:
-                            while True:
-                                position = get_random_position(self.game_surface)
-                                if (
-                                        position.distance_to(self.spaceship.position)
-                                        > self.MIN_ASTEROID_DISTANCE
-                                ):
-                                    break
-                            self.destroyed_small = 0
-                            self.asteroids.append(Asteroid(position, self.asteroids.append))
+                            if self.spaceship:
+                                while True:
+                                    position = get_random_position(self.game_surface)
+                                    if (
+                                            position.distance_to(self.spaceship.position)
+                                            > self.MIN_ASTEROID_DISTANCE
+                                    ):
+                                        break
+                                self.destroyed_small = 0
+                                self.asteroids.append(Asteroid(position, self.asteroids.append))
+                    elif asteroid.size == 2:
+                        if not self.mute:
+                            pygame_assets.loaders.sound("boom.mp3").play()
                     elif asteroid.size == 3:
                         if not self.mute:
                             pygame_assets.loaders.sound('zapsplat_explosion_large.mp3').play()
-                    else:
-                        if not self.mute:
-                            pygame_assets.loaders.sound("boom.mp3").play()
+
                     self.asteroids.remove(asteroid)
                     self.bullets.remove(bullet)
                     asteroid.split()
@@ -150,6 +154,11 @@ class SpaceRocks:
             if not self.game_surface.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
+    def _process_bonus(self):
+        if self.spaceship:
+            if self.bonus and  self.bonus.collides_with(self.spaceship):
+                self.bonus = None
+
     def _draw(self):
         self.screen.blit(self.background, self.game_column)
         self.screen.blit(pygame.surface.Surface((300, 700)), self.score_column)
@@ -157,16 +166,11 @@ class SpaceRocks:
         for game_object in self._get_game_objects():
             game_object.draw(self.game_surface)
 
-        self.scoretext = self.font.render("Score" , 1, (255, 0, 0))
+        self.scoretext = self.font.render("Score", 1, (255, 0, 0))
         self.scorevalue = self.font.render(str(self.score), 1, (255, 0, 0))
 
         self.score_surface.blit(self.scoretext, (30, 0))
         self.score_surface.blit(self.scorevalue, (30, 50))
-
-        # test_label = makeLabel("Score = " + str(self.score), 60, 400, 300, fontColour="red",
-        #                        font='juiceitc', background='clear')
-        #
-        # showLabel(test_label)
 
         pygame.display.flip()
 
@@ -212,5 +216,8 @@ class SpaceRocks:
 
         if self.spaceship:
             game_objects.append(self.spaceship)
+
+        if self.bonus:
+            game_objects.append(self.bonus)
 
         return game_objects

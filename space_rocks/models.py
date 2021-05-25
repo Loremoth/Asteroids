@@ -116,3 +116,7 @@ class Bullet(GameObject):
 
     def move(self, surface):
         self.position = self.position + self.velocity
+
+class Bonus(GameObject):
+    def __init__(self, position, sprite, velocity):
+        super().__init__(position, pygame_assets.loaders.image('xdeVt.jpg').convert_alpha(), Vector2(0))
