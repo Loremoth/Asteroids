@@ -7,7 +7,9 @@ from pygame_functions import screenSize, moveLabel, showLabel, makeLabel, hideLa
 
 from space_rocks.constants import FinalScreen
 from utils import load_sprite, get_random_position, print_text
-from models import Asteroid, Spaceship, Bonus
+from models.models import Asteroid
+from models.bonus import SlowBonus
+from models.game_status import NormalStatus, GameStatus
 
 
 class SpaceRocks:
@@ -37,8 +39,9 @@ class SpaceRocks:
 
         self.asteroids = []
         self.bullets = []
-        self.spaceship = Spaceship((400, 300), self.bullets.append, mute=self.mute)
-        self.bonus = Bonus((500, 600), None, None)
+        self.game_status : GameStatus = NormalStatus()
+        self.spaceship = self.game_status.get_ship()((400, 300), self.bullets.append, mute=self.mute)
+        self.bonus = SlowBonus((500, 600))
         logging.info("Creating initial asteroids")
         self._create_asteroids()
 
@@ -48,6 +51,7 @@ class SpaceRocks:
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(file)
+
         pygame.mixer.music.play(-1)  # If the loops is -1 then the music will repeat indefinitely.
 
     def _create_asteroids(self):
@@ -156,8 +160,17 @@ class SpaceRocks:
 
     def _process_bonus(self):
         if self.spaceship:
-            if self.bonus and  self.bonus.collides_with(self.spaceship):
+            if self.bonus and self.bonus.collides_with(self.spaceship):
+                self.game_status = self.bonus.get_status()
                 self.bonus = None
+                self.spaceship = self.game_status.get_ship()((self.spaceship.position.x, self.spaceship.position.y)
+                                                             , self.bullets.append, self.mute, self.spaceship.direction,
+                                                             self.spaceship.velocity)
+            if self.game_status.get_finished():
+                self.game_status = NormalStatus()
+                self.spaceship = self.game_status.get_ship()((self.spaceship.position.x, self.spaceship.position.y)
+                                                             , self.bullets.append, self.mute, self.spaceship.direction,
+                                                             self.spaceship.velocity)
 
     def _draw(self):
         self.screen.blit(self.background, self.game_column)

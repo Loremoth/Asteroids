@@ -4,56 +4,8 @@ import pygame.time
 import pygame_assets.loaders
 from pygame.math import Vector2
 from pygame.transform import rotozoom
-from utils import load_sprite, wrap_position, get_random_velocity
-
-UP = Vector2(0, -1)
-
-
-class GameObject:
-
-    def __init__(self, position, sprite, velocity):
-        self.position = Vector2(position)
-        self.sprite = sprite
-        self.radius = sprite.get_width() / 2
-        self.velocity = Vector2(velocity)
-
-    def draw(self, surface):
-        blit_position = self.position - Vector2(self.radius)
-        surface.blit(self.sprite, blit_position)
-
-    def move(self, surface):
-        self.position = wrap_position(self.position + self.velocity, surface)
-
-    def collides_with(self, other_obj):
-        distance = self.position.distance_to(other_obj.position)
-        return distance < self.radius + other_obj.radius
-
-
-class Asteroid(GameObject):
-
-    def __init__(self, position, create_asteroid_callback, size=3):
-        self.create_asteroid_callback = create_asteroid_callback
-        self.size = size
-
-        size_to_scale = {
-            3: 1,
-            2: 0.5,
-            1: 0.25,
-        }
-        scale = size_to_scale[size]
-        sprite = rotozoom(load_sprite("asteroid"), 0, scale)
-
-        super().__init__(
-            position, sprite, get_random_velocity(1, 3)
-        )
-
-    def split(self):
-        if self.size > 1:
-            for _ in range(2):
-                asteroid = Asteroid(
-                    self.position, self.create_asteroid_callback, self.size - 1
-                )
-                self.create_asteroid_callback(asteroid)
+from models.models import GameObject, UP, Bullet
+from utils import load_sprite
 
 
 class Spaceship(GameObject):
@@ -62,16 +14,18 @@ class Spaceship(GameObject):
     BULLET_SPEED = 10
     MAX_SPEED = 5
 
-    def __init__(self, position, create_bullet_callback, mute):
+    def __init__(self, position, create_bullet_callback, mute, direction=None, velocity=Vector2(0)):
         self.create_bullet_callback = create_bullet_callback
         # Make a copy of the original UP vector
         if not mute:
             self.laser_sound = pygame_assets.loaders.sound("laser.wav")
             self.laser_sound.set_volume(0.1)
-        self.direction = Vector2(UP)
+        self.direction = direction if direction else Vector2(UP)
         self.mute = mute
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
         self.last_shoot_time = 0
+
+        self.velocity = velocity
 
     def rotate(self, clockwise=True):
         sign = 1 if clockwise else -1
@@ -87,7 +41,9 @@ class Spaceship(GameObject):
 
     def accelerate(self):
         self.velocity += self.direction * self.ACCELERATION
+        self._limit_velocity()
 
+    def _limit_velocity(self):
         if self.velocity[0] > self.MAX_SPEED:
             self.velocity[0] = self.MAX_SPEED
         if self.velocity[1] > self.MAX_SPEED:
@@ -110,13 +66,16 @@ class Spaceship(GameObject):
                 self.laser_sound.play()
 
 
-class Bullet(GameObject):
-    def __init__(self, position, velocity):
-        super().__init__(position, load_sprite("bullet"), velocity)
+class SlowShip(Spaceship):
 
-    def move(self, surface):
-        self.position = self.position + self.velocity
+    def __init__(self, position, create_bullet_callback, mute, direction, velocity):
+        super().__init__(position, create_bullet_callback, mute)
+        self.MANEUVERABILITY = 1
+        self.ACCELERATION = 0.1
+        self.BULLET_SPEED = 5
+        self.MAX_SPEED = 3
+        self.direction = direction
+        self.velocity = velocity
 
-class Bonus(GameObject):
-    def __init__(self, position, sprite, velocity):
-        super().__init__(position, pygame_assets.loaders.image('xdeVt.jpg').convert_alpha(), Vector2(0))
+    def draw(self, surface):
+        super().draw(surface)
